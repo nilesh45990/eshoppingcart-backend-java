@@ -1,0 +1,78 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.shoppingcart.demo.controller;
+
+import com.shoppingcart.demo.dto.CartItemDto;
+import com.shoppingcart.demo.dto.CustomerDto;
+import com.shoppingcart.demo.dto.ProductDto;
+import com.shoppingcart.demo.model.CartItemModel;
+import com.shoppingcart.demo.service.CartService;
+import com.shoppingcart.demo.service.CustomerService;
+import com.shoppingcart.demo.service.ProductService;
+import java.util.Iterator;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ *
+ * @author nileshkumar
+ */
+@RestController
+@RequestMapping("/cart")
+public class CartController {
+
+    @Autowired
+    CustomerService customerService;
+    @Autowired
+    ProductService productService;
+    @Autowired
+    CartService cartService;
+
+    @GetMapping(value = "/getCartDetail")
+    public ResponseEntity showCartItem(HttpServletRequest request) {
+        String emailId = request.getSession().getAttribute("customerId").toString();
+        CustomerDto customer = customerService.getCustomerByEmailId(emailId);
+        return ResponseEntity.ok().body(cartService.getCartItems(customer.getCustomerId()));
+    }
+
+    @PostMapping(value = "/addProduct", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity addCartItem(HttpServletRequest request, @RequestBody CartItemModel cartItemModel) {
+
+        String emailId = request.getSession().getAttribute("customerId").toString();
+        CustomerDto customer = customerService.getCustomerByEmailId(emailId);
+        List<CartItemDto> cartItems = cartService.getCartItems(customer.getCustomerId());
+        ProductDto productDetail = productService.getProductById(cartItemModel.getProductId());
+
+        for (Iterator<CartItemDto> cartItemIterator = cartItems.listIterator(); cartItemIterator.hasNext();) {
+            CartItemDto cartItemDto = cartItemIterator.next();
+            if (cartItemModel.getProductId() == cartItemDto.getProductId()) {
+                cartItemModel.setCartItemId(cartItemDto.getCartItemId());
+                cartItemModel.setUnitPrice(productDetail.getProductPrice());
+                cartService.addCartItem(cartItemModel);
+                return ResponseEntity.ok().body("Item added to cart successfully");
+            }
+        }
+        cartItemModel.setUnitPrice(productDetail.getProductPrice());
+        cartService.addCartItem(cartItemModel);
+        return ResponseEntity.ok().body("Item added to cart successfully");
+    }
+
+    @DeleteMapping("/removeProduct/{cartItemId}")
+    public ResponseEntity removeCartItem(@PathVariable(value = "cartItemId") int cartItemId) {
+        cartService.removeCartItem(cartItemId);
+        return ResponseEntity.ok().body("Item removed from cart successfully");
+    }
+}
