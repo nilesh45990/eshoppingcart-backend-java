@@ -42,7 +42,7 @@ public class CustomFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        LOGGER.info("This Filter is only called when request is mapped for /customer resource");
+        LOGGER.info("This Filter is only called when request is mapped for:"+request.getRequestURI());
 
         //call next filter in the filter chain
         response.setHeader("Access-Control-Allow-Origin", "*");

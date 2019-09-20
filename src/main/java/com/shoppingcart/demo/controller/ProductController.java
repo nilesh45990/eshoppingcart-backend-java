@@ -21,14 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api("Product")
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/products")
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
     @ApiOperation(value = "Get all products")
-    @GetMapping("/get-all-products")
+    @GetMapping("")
     public GenericResponse getAllProducts() {
         return productService.getAllProducts();
     }
