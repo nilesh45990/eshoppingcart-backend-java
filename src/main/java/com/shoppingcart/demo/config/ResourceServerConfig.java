@@ -36,11 +36,13 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) {
         try {
             logger.info("################## filter called in resource server##################");
-            http.requestMatchers().and().authorizeRequests().antMatchers("/actuator/**", "/api-docs/**").permitAll()
+            http.requestMatchers().and().authorizeRequests().antMatchers("/products/**", "/actuator/**", "/api-docs/**")
+                    .permitAll()
                     // .antMatchers("/product/**","cart/**").authenticated();
                     .anyRequest().authenticated();
         } catch (Exception ex) {
-            System.out.println("this is error handling in resource server ############################################");
+            System.out
+                    .println("this is error handling in resource server ############################################");
 
         }
     }
