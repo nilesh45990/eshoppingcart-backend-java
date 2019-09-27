@@ -43,6 +43,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     private JwtAccessTokenConverter accessTokenConverter;
 
     @Autowired
+    private CustomTokenConverter customTokenEnhancer;
+
+    @Autowired
     private AuthenticationManager authenticationManager;
 
     @Override
@@ -55,8 +58,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         try {
             TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
-            enhancerChain.setTokenEnhancers(Arrays.asList(accessTokenConverter));
-            endpoints.tokenStore(tokenStore).accessTokenConverter(accessTokenConverter).tokenEnhancer(enhancerChain)
+            enhancerChain.setTokenEnhancers(Arrays.asList(customTokenEnhancer, accessTokenConverter));
+            endpoints.tokenStore(tokenStore).tokenEnhancer(enhancerChain)
                     .authenticationManager(authenticationManager);
         } catch (Exception ex) {
             System.out.println("error handled#############################");
