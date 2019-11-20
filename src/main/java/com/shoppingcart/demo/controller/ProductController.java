@@ -34,7 +34,7 @@ public class ProductController {
     }
 
     @ApiOperation(value = "Get product detail of product for given product id")
-    @GetMapping("/get-product/{productId}")
+    @GetMapping("/{productId}")
     public GenericResponse getProductById(@PathVariable(value = "productId") String productId) {
         return productService.getProductById(productId);
     }

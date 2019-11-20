@@ -1,6 +1,5 @@
 package com.shoppingcart.demo.config;
 
-import com.shoppingcart.demo.exception.GlobalExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +35,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) {
         try {
             logger.info("################## filter called in resource server##################");
-            http.requestMatchers().and().authorizeRequests().antMatchers("/products/**", "/actuator/**", "/api-docs/**")
-                    .permitAll()
+            http.requestMatchers().and().authorizeRequests()
+                    .antMatchers("/products/**","/swagger-ui.html/**", "/swagger-resources/**", "/v2/api-docs/**").permitAll()
                     // .antMatchers("/product/**","cart/**").authenticated();
                     .anyRequest().authenticated();
         } catch (Exception ex) {
